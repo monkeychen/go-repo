@@ -6,5 +6,5 @@ import (
 )
 
 func RunMain() {
-	fmt.Println("Hello LiteIDE!")
+	fmt.Println("Hello LiteIDE!!!!")
 }
