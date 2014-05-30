@@ -12,4 +12,6 @@ func main() {
 	chap23.DefineVar()
 	//go chap3.RunMain()
 	chap3.RunSection3()
+	chap3.RunSection3_1()
+	chap3.RunChannelDemo()
 }
