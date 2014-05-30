@@ -10,5 +10,6 @@ import (
 func main() {
 	fmt.Printf("example-1:Hello, world\n")
 	chap23.DefineVar()
-	chap3.RunMain()
+	//go chap3.RunMain()
+	chap3.RunSection3()
 }
