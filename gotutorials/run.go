@@ -10,8 +10,10 @@ import (
 func main() {
 	fmt.Printf("example-1:Hello, world\n")
 	chap23.DefineVar()
-	//go chap3.RunMain()
-	chap3.RunSection3()
-	chap3.RunSection3_1()
-	chap3.RunChannelDemo()
+	chap3.RunWebDemo()
+	/*
+		chap3.RunSection3()
+		chap3.RunSection3_1()
+		chap3.RunChannelDemo()
+	*/
 }
