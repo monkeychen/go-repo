@@ -5,14 +5,31 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
+func showHelp() {
+	fmt.Printf("usage: %s [-b|--bar] <whole-number>\n", filepath.Base(os.Args[0]))
+	fmt.Println("-b --bar draw an underbar and an overbar")
+	os.Exit(1)
+}
+
 func main() {
-	if len(os.Args) == 1 {
-		fmt.Printf("usage: %s <whole-number>\n", filepath.Base(os.Args[0]))
-		os.Exit(1)
+	if len(os.Args) == 1 || (len(os.Args) > 1 && (os.Args[1] == "-h" || os.Args[1] == "--help")) {
+		showHelp()
 	}
+	isShowBar := false
 	stringOfDigits := os.Args[1]
+	if len(os.Args) > 2 && (os.Args[1] == "-b" || os.Args[1] == "--bar") {
+		stringOfDigits = os.Args[2]
+		isShowBar = true
+	}
+
+	strDigitLen := len(stringOfDigits)
+	if isShowBar {
+		overbar := strings.Repeat("*", strDigitLen*7)
+		fmt.Println(overbar)
+	}
 	for row := range bigDigits[0] {
 		line := ""
 		for column := range stringOfDigits {
@@ -24,6 +41,10 @@ func main() {
 			}
 		}
 		fmt.Println(line)
+	}
+	if isShowBar {
+		underbar := strings.Repeat("*", strDigitLen*7)
+		fmt.Println(underbar)
 	}
 }
 
