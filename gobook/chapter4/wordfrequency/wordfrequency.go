@@ -16,12 +16,19 @@ func readWordFromFile(filePath string, splitChars []string) []string {
 		log.Fatal("failed to open the file: ", err)
 	}
 	defer file.Close()
-	words := make([]string)
-	lines := make([]string)
+	words := make([]string, 100)
+	lines := make([]string, 50)
 	reader := bufio.NewReader(file)
 	reader.ReadString('\n')
+	return lines
 }
 
 func main() {
 	fmt.Println("Hello World!")
+	var a = []int{0, 1, 2, 3, 4, 5, 6, 7}
+	var b = make([]int, 6)
+	n1 := copy(b, a[0:])
+	fmt.Println(n1, b)
+	n2 := copy(b, a[4:])
+	fmt.Println(n2, b)
 }
