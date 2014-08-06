@@ -4,23 +4,89 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"os"
+	"sort"
 	"strings"
+	"unicode"
+	"unicode/utf8"
 )
 
-func readWordFromFile(filePath string, splitChars []string) []string {
+func CalculateWordFromFile(filePath string) (wordCountMap map[string]int) {
 	var file *os.File
 	var err error
 	if file, err = os.Open(filePath); err != nil {
 		log.Fatal("failed to open the file: ", err)
 	}
 	defer file.Close()
-	words := make([]string, 100)
-	lines := make([]string, 50)
+	wordCountMap = make(map[string]int)
 	reader := bufio.NewReader(file)
-	reader.ReadString('\n')
-	return lines
+	for {
+		line, err := reader.ReadString('\n')
+
+		for _, word := range SplitOnNonLetters(strings.TrimSpace(line)) {
+			if utf8.RuneCountInString(word) > 1 {
+				wordCountMap[word] += 1
+			}
+		}
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			log.Fatal("failed to finish reading the file: ", err)
+		}
+	}
+	return
+}
+
+func SplitOnNonLetters(s string) []string {
+	notALetter := func(char rune) bool { return !unicode.IsLetter(char) }
+	return strings.FieldsFunc(s, notALetter)
+}
+
+func reportByWords(frequencyForWord map[string]int) {
+	words := make([]string, 0, len(frequencyForWord))
+	wordWidth, frequencyWidth := 0, 0
+	for word, frequency := range frequencyForWord {
+		words = append(words, word)
+		if width := utf8.RuneCountInString(word); width > wordWidth {
+			wordWidth = width
+		}
+		if width := len(fmt.Sprint(frequency)); width > frequencyWidth {
+			frequencyWidth = width
+		}
+	}
+	sort.Strings(words)
+	gap := wordWidth + frequencyWidth - len("Word") - len("Frequency")
+	fmt.Printf("Word %*s%s\n", gap, " ", "Frequency")
+	for _, word := range words {
+		fmt.Printf("%-*s %*d\n", wordWidth, word, frequencyWidth,
+			frequencyForWord[word])
+	}
+}
+
+func invertStringIntMap(intForString map[string]int) map[int][]string {
+	stringsForInt := make(map[int][]string, len(intForString))
+	for key, value := range intForString {
+		stringsForInt[value] = append(stringsForInt[value], key)
+	}
+	return stringsForInt
+}
+
+func reportByFrequency(wordsForFrequency map[int][]string) {
+	frequencies := make([]int, 0, len(wordsForFrequency))
+	for frequency := range wordsForFrequency {
+		frequencies = append(frequencies, frequency)
+	}
+	sort.Ints(frequencies)
+	width := len(fmt.Sprint(frequencies[len(frequencies)-1]))
+	fmt.Println("Frequency → Words")
+	for _, frequency := range frequencies {
+		words := wordsForFrequency[frequency]
+		sort.Strings(words)
+		fmt.Printf("%*d %s\n", width, frequency, strings.Join(words, ", "))
+	}
 }
 
 func main() {
@@ -31,4 +97,8 @@ func main() {
 	fmt.Println(n1, b)
 	n2 := copy(b, a[4:])
 	fmt.Println(n2, b)
+	result := CalculateWordFromFile("ump.log")
+	reportByWords(result)
+	wordsForFrequency := invertStringIntMap(result)
+	reportByFrequency(wordsForFrequency)
 }
