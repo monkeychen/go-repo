@@ -30,3 +30,5 @@ Makefile*
 #others
 github.com
 code.google.com
+.idea/
+*.iml
