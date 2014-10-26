@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 	"unicode"
@@ -69,6 +70,27 @@ func ex5() {
 	fmt.Printf("|%x|%X|%8x|%8X|%#04x|%#04X|0x%04X|\n", i, i, i, i, i, i, i)
 	i = 569
 	fmt.Printf("|$%d|$%06d|$%+06d|$%s|\n", i, i, i, Pad(i, 6, '*'))
+}
+
+func SimplifyWhitespace(s string) string {
+	var buffer bytes.Buffer
+	skip := true
+	for _, char := range s {
+		if unicode.IsSpace(char) {
+			if !skip {
+				buffer.WriteRune(' ')
+				skip = true
+			}
+		} else {
+			buffer.WriteRune(char)
+			skip = false
+		}
+	}
+	s = buffer.String()
+	if skip && len(s) > 0 {
+		s = s[:len(s)-1]
+	}
+	return s
 }
 
 func main() {
