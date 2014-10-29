@@ -2,9 +2,13 @@
 package chapter3
 
 import (
+	"bufio"
 	"fmt"
 	"gobook/chapter3/stringbase"
 	"io"
+	_ "io/ioutil"
+	"log"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -164,4 +168,71 @@ func TestUtf8Api(t *testing.T) {
 		}
 	}
 	fmt.Println(valueForKey)
+}
+
+func TestLog(t *testing.T) {
+	if !FileExists("logfile") {
+		CreateFile("logfile")
+	}
+	f, err := os.OpenFile("logfile", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		t.Fatalf("error: %v", err)
+	}
+	defer f.Close()
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
+	// attempt #1
+	log.SetOutput(io.MultiWriter(os.Stderr, f))
+	log.Println("hello, logfile")
+
+	// attempt #2
+	log.SetOutput(io.Writer(f))
+	log.Println("hello, logfile")
+
+	// attempt #3
+	log.SetOutput(f)
+	log.Println("hello, logfile")
+}
+
+func TestLogger(t *testing.T) {
+	if !FileExists("loggerfile") {
+		CreateFile("loggerfile")
+	}
+	f, err := os.OpenFile("loggerfile", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		t.Fatalf("error: %v", err)
+	}
+	defer f.Close()
+	var buf []byte
+	n, err := f.Read(buf)
+	reader := bufio.NewReader(f)
+	line, err := reader.ReadString('\n')
+	fmt.Printf("Read from file[%s],content=[%s]\n", f.Name(), line)
+	fmt.Println("n=", n, "err = ", err)
+	writter := bufio.NewWriter(f)
+	writter.WriteString("This line was written by bufio.write()...\n")
+	writter.Flush()
+
+	logger1 := log.New(f, "Logger.test.", log.LstdFlags|log.Lshortfile)
+	logger1.Println("log test ...")
+}
+
+func FileExists(name string) bool {
+	if _, err := os.Stat(name); err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+	}
+	return true
+}
+
+func CreateFile(name string) error {
+	fo, err := os.Create(name)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		fo.Close()
+	}()
+	return nil
 }
