@@ -236,3 +236,43 @@ func CreateFile(name string) error {
 	}()
 	return nil
 }
+
+type goer interface {
+	Dogo() string
+}
+
+type go1 struct {
+	name string
+}
+
+type Go2 struct {
+	go1
+}
+
+type Go3 struct {
+	age int
+}
+
+type Go4 struct {
+	atti go1
+}
+
+func (obj go1) Dogo() string {
+	fmt.Println("hi, i am [", obj.name, "]")
+	return obj.name
+}
+
+func invoke(arg goer) {
+	ret := arg.Dogo()
+	fmt.Println("the return val is:", ret)
+}
+
+func TestRun(t *testing.T) {
+	obj := Go2{go1{"simiam"}}
+	//obj2 := Go3{11}
+	//obj3 := Go4{go1{"mushroom"}}
+	invoke(obj)
+	//runTest(obj2) //compile error :Go3 does not implement goer (missing Dogo method)
+	//runTest(obj3) //compile error :Go4 does not implement goer (missing Dogo method)
+
+}
