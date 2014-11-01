@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	_ "io/ioutil"
-	_ "log"
+	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -62,7 +62,19 @@ func apiDemo() {
 	fmt.Printf("%b,%#x\n", i, i)
 }
 
-func main() {
+type M3uEntry struct {
+	Name   string
+	Path   string
+	length uint32
+}
+
+type M3uFile struct {
+	fileHead  string
+	entryHead string
+	entries   []M3uEntry
+}
+
+func readByBufioApi() {
 	inArgs := os.Args
 	if len(inArgs) < 2 || !strings.HasSuffix(inArgs[1], ".m3u") {
 		fmt.Printf("usage: %s <file.m3u>\n", filepath.Base(inArgs[0]))
@@ -78,4 +90,19 @@ func main() {
 	reader := bufio.NewReader(m3uFile)
 	n, err := reader.ReadString('\n')
 	fmt.Println("n = ", n, ", err = ", err)
+}
+
+func main() {
+	inArgs := os.Args
+	if len(inArgs) < 2 || !strings.HasSuffix(inArgs[1], ".m3u") {
+		fmt.Printf("usage: %s <file.m3u>\n", filepath.Base(inArgs[0]))
+		os.Exit(1)
+	}
+	m3uFileName := inArgs[1]
+	if rawBytes, err := ioutil.ReadFile(m3uFileName); err != nil {
+		log.Fatal(err)
+	} else {
+		fmt.Println(string(rawBytes))
+	}
+
 }
