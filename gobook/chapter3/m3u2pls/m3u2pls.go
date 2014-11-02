@@ -99,7 +99,7 @@ func readByBufioApi() {
 	fmt.Println("n = ", n, ", err = ", err)
 }
 
-func MyImpl() {
+func main() {
 	inArgs := os.Args
 	if len(inArgs) < 2 || !strings.HasSuffix(inArgs[1], ".m3u") {
 		fmt.Printf("usage: %s <file.m3u>\n", filepath.Base(inArgs[0]))
@@ -110,7 +110,7 @@ func MyImpl() {
 		log.Fatal(err)
 	} else {
 		var entries []M3uEntry
-		//isEntryHead := false
+		isEntryHead := false
 		var entry M3uEntry
 		count := 0
 		for _, line := range strings.Split(string(rawBytes), "\n") {
@@ -118,24 +118,31 @@ func MyImpl() {
 				continue
 			}
 			if strings.HasPrefix(line, "#EXTINF") {
-				//isEntryHead = true
+				isEntryHead = true
 
 				line = strings.TrimLeft(line, "#EXTINF:")
 				idx := strings.Index(line, ",")
 				length, err := strconv.ParseUint(string(line[0:idx]), 10, 32)
 				if err != nil {
-					continue
+					if string(line[0:idx]) == "-1" {
+						length = 0
+					} else {
+						continue
+					}
 				}
 				count++
 				name := line[idx+1:]
-				entry = M3uEntry{Index: uint32(count), Name: name, Length: uint32(length)}
-
+				entry.Index = uint32(count)
+				entry.Name = name
+				entry.Length = uint32(length)
 			} else {
-				//isEntryHead = false
+				isEntryHead = false
 				entry.Path = line
 			}
-			entries = append(entries, entry)
-			entry = M3uEntry{}
+			if !isEntryHead {
+				entries = append(entries, entry)
+				entry = M3uEntry{}
+			}
 		}
 		for _, song := range entries {
 			fmt.Println(song)
@@ -150,7 +157,7 @@ type Song struct {
 	Seconds  int
 }
 
-func main() {
+func main_ans() {
 	if len(os.Args) == 1 || !strings.HasSuffix(os.Args[1], ".m3u") {
 		fmt.Printf("usage: %s <file.m3u>\n", filepath.Base(os.Args[0]))
 		os.Exit(1)
