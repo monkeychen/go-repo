@@ -139,6 +139,7 @@ func main() {
 				isEntryHead = false
 				entry.Path = line
 			}
+			fmt.Println(entry)
 			if !isEntryHead {
 				entries = append(entries, entry)
 				entry = M3uEntry{}
