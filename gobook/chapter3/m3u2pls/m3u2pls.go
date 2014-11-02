@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -63,9 +64,15 @@ func apiDemo() {
 }
 
 type M3uEntry struct {
+	Index  uint32
 	Name   string
 	Path   string
-	length uint32
+	Length uint32
+}
+
+func (entry M3uEntry) String() string {
+	return fmt.Sprintf("File%d=%s\nTitle%d=%s\nLength%d=%d\n",
+		entry.Index, entry.Path, entry.Index, entry.Name, entry.Index, entry.Length)
 }
 
 type M3uFile struct {
@@ -102,7 +109,33 @@ func main() {
 	if rawBytes, err := ioutil.ReadFile(m3uFileName); err != nil {
 		log.Fatal(err)
 	} else {
-		fmt.Println(string(rawBytes))
+		var entries []*M3uEntry
+		//isEntryHead := false
+		var entry M3uEntry
+		count := 0
+		for _, line := range strings.Split(string(rawBytes), "\n") {
+			if line == "" || strings.HasPrefix(line, "#EXTM3U") {
+				continue
+			}
+			if strings.HasPrefix(line, "#EXTINF") {
+				//isEntryHead = true
+
+				line = strings.TrimLeft(line, "#EXTINF:")
+				idx := strings.Index(line, ",")
+				length, err := strconv.ParseUint(string(line[0:idx]), 10, 32)
+				if err != nil {
+					continue
+				}
+				count++
+				name := line[idx+1:]
+				entry = M3uEntry{Index: uint32(count), Name: name, Length: uint32(length)}
+				entries = append(entries, &entry)
+			} else {
+				//isEntryHead = false
+				entry.Path = line
+			}
+		}
+		fmt.Println(entries)
 	}
 
 }
