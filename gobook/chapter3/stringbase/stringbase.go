@@ -22,7 +22,8 @@ func ex2() {
 	fmt.Printf("string:\"%s\"\n", phrase)
 	fmt.Println("index rune char bytes")
 	for index, char := range phrase {
-		fmt.Printf("%-2d	%U	'%c'	%X\n", index, char, char, []byte(string(char)))
+		fmt.Printf("%-2d	%U	'%c'	% X	%s	%d\n",
+			index, char, char, []byte(string(char)), string(char), char)
 	}
 }
 
@@ -95,9 +96,9 @@ func SimplifyWhitespace(s string) string {
 
 func main() {
 	fmt.Println("string base examples ...")
-	ex1()
+	//ex1()
 	ex2()
-	ex3()
-	ex4()
-	ex5()
+	//ex3()
+	//ex4()
+	//ex5()
 }
