@@ -1,7 +1,10 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/astaxie/beego"
+	"io/ioutil"
+	"net/http"
 )
 
 type MainController struct {
@@ -13,6 +16,20 @@ func (c *MainController) Get() {
 }
 
 func (c *MainController) Post() {
-	c.TplNames = "google.html"
+	keyWords := c.GetString("searchKeyWords")
+	fmt.Println("keyWords = ", keyWords)
+	resp, err := http.Get("https://www.google.com/search?q=" + keyWords + "&ie=UTF-8&oe=UTF-8&hl=en-US")
+	if err != nil {
+		// handle error
+		fmt.Println(err)
+	}
 
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		// handle error
+		fmt.Println(err)
+	}
+
+	c.Ctx.WriteString(string(body))
 }

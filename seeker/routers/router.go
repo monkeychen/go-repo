@@ -1,10 +1,11 @@
 package routers
 
 import (
-	"seeker/controllers"
 	"github.com/astaxie/beego"
+	"seeker/controllers"
 )
 
 func init() {
-    beego.Router("/", &controllers.MainController{})
+	beego.Router("/", &controllers.MainController{})
+	beego.Router("/search", &controllers.MainController{})
 }
