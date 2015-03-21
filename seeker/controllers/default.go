@@ -5,9 +5,14 @@ import (
 )
 
 type MainController struct {
-	beego.ConBtroller
+	beego.Controller
 }
 
 func (c *MainController) Get() {
 	c.TplNames = "google.html"
+}
+
+func (c *MainController) Post() {
+	c.TplNames = "google.html"
+
 }
