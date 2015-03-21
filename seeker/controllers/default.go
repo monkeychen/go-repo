@@ -5,11 +5,9 @@ import (
 )
 
 type MainController struct {
-	beego.Controller
+	beego.ConBtroller
 }
 
 func (c *MainController) Get() {
-	c.Data["Website"] = "beego.me"
-	c.Data["Email"] = "astaxie@gmail.com"
-	c.TplNames = "index.tpl"
+	c.TplNames = "google.html"
 }
