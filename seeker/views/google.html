@@ -14,6 +14,7 @@
     <br>
     <br>
     <br>
+
     <div class="row">
         <div class="col-md-offset-2 col-md-8">
             <p align="center">
@@ -24,11 +25,19 @@
 
     <br>
 
-    <form action="/search" method="POST" >
+    <form action="/search" method="POST">
         <div class="row">
             <div class="form-group col-md-offset-2 col-md-8">
                 <label class="sr-only control-label" for="searchKeyWords">Key Words</label>
-                <input type="text" class="form-control" name="searchKeyWords" id="searchKeyWords" placeholder="Input key words">
+                <input type="text" class="form-control" name="searchKeyWords" id="searchKeyWords"
+                       placeholder="Input key words">
+            </div>
+        </div>
+        <div class="row">
+            <div class="checkbox form-group col-md-offset-2 col-md-8">
+                <label>
+                    <input type="checkbox" name="isOpenEyes" id="isOpenEyes"> Open your eyes!
+                </label>
             </div>
         </div>
 

@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
+	"testing"
 )
 
 type Person struct {
@@ -15,12 +17,17 @@ type Person struct {
 	email    string //未导出的字段，首字母是小写的
 }
 
-func test_main() {
-	t := template.New("fieldname example")
-	t, _ = t.Parse("{{if 1}}hello {{.UserName}}!{{else}}else block...{{end}}")
+func TestMain(t *testing.T) {
+	file, _ := os.Create("logs.log")
+	logger := log.New(file, "", log.LstdFlags|log.Llongfile)
+	tmpl := template.New("fieldname example")
+	tmpl, _ = tmpl.Parse("{{if 1}}hello {{.UserName}}!{{else}}else block...{{end}}")
 	p := Person{UserName: "Astaxie"}
-	t.Execute(os.Stdout, p)
-	httpGet()
+	logger.Println("begin execute...")
+	tmpl.Execute(os.Stdout, p)
+	logger.Println("after execute...")
+	//httpGet()
+
 }
 
 func httpGet() {
