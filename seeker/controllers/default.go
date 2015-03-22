@@ -33,3 +33,13 @@ func (c *MainController) Post() {
 
 	c.Ctx.WriteString(string(body))
 }
+
+type RedirectController struct {
+	beego.Controller
+}
+
+func (c *RedirectController) Get() {
+	targetUrl := c.GetString("q")
+	fmt.Println("targetUrl = ", targetUrl)
+	c.Ctx.Redirect(http.StatusFound, targetUrl)
+}
