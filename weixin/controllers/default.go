@@ -6,7 +6,6 @@ import (
 	"github.com/astaxie/beego"
 	"io"
 	"log"
-	"net/http"
 	"sort"
 	"strings"
 )
